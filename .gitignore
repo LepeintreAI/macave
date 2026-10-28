@@ -1,0 +1,17 @@
+# Cache Python (recréé automatiquement)
+__pycache__/
+*.pyc
+
+# Base de données locale (recréée avec : python demo.py)
+macave.db
+
+# Photos envoyées pendant les tests (on garde seulement le dossier)
+static/photos/*
+!static/photos/.gitkeep
+
+# Environnement virtuel et fichiers d'éditeur
+venv/
+.venv/
+.spyproject/
+.idea/
+.vscode/
