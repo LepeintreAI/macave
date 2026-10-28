@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_tri.html" import entete, recherche %}
+{% block contenu %}
+<h1>Catalogue des vins</h1>
+<p class="gris">Le catalogue et les évaluations sont partagés entre tous les utilisateurs.</p>
+{{ recherche("catalogue", q, type_vin, types, tri, ordre) }}
+
+{% if vins %}
+<table>
+  <tr>
+    {{ entete("catalogue", "domaine", "Domaine", tri, ordre, q, type_vin) }}
+    {{ entete("catalogue", "nom", "Nom", tri, ordre, q, type_vin) }}
+    {{ entete("catalogue", "type", "Type", tri, ordre, q, type_vin) }}
+    {{ entete("catalogue", "millesime", "Millésime", tri, ordre, q, type_vin) }}
+    {{ entete("catalogue", "region", "Région", tri, ordre, q, type_vin) }}
+    {{ entete("catalogue", "note", "Note commu.", tri, ordre, q, type_vin) }}
+  </tr>
+  {% for v in vins %}
+  {% set moyenne = v.note_moyenne() %}
+  <tr>
+    <td>{{ v.domaine }}</td>
+    <td><a href="{{ url_for('vin', id_vin=v.id_vin) }}">{{ v.nom }}</a></td>
+    <td>{{ v.type_vin }}</td>
+    <td>{{ v.millesime }}</td>
+    <td>{{ v.region }}</td>
+    <td>{% if moyenne is none %}Non évalué{% else %}{{ moyenne | round(1) }}/20 ({{ v.evaluations | length }}){% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+  <p>Aucun vin ne correspond.</p>
+{% endif %}
+{% endblock %}

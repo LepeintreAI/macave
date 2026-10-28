@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>MaCave</title>
+  <style>
+    body   { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 0 16px; }
+    nav    { background: #6b1d2a; padding: 10px 16px; margin-bottom: 20px; }
+    nav a  { color: white; margin-right: 16px; text-decoration: none; }
+    .erreur { background: #fde2e2; color: #8a1c1c; padding: 8px; margin-bottom: 10px; }
+    .succes { background: #e2f5e5; color: #1c6b2a; padding: 8px; margin-bottom: 10px; }
+    label  { display: block; margin-top: 10px; }
+    input, select, textarea { padding: 6px; width: 260px; }
+    fieldset { margin: 12px 0; }
+    .gris  { color: #666; }
+    .recherche input, .recherche select { width: auto; }
+    img.etiquette { max-width: 220px; border: 1px solid #ccc; }
+    button { margin-top: 14px; padding: 8px 16px; }
+    table  { border-collapse: collapse; margin: 10px 0; }
+    th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+    .carte { display: inline-block; border: 1px solid #ccc; padding: 12px; margin: 6px; min-width: 150px; }
+  </style>
+</head>
+<body>
+  <!-- Menu : différent selon qu'on est connecté ou non -->
+  <nav>
+    {% if session.get("id_utilisateur") %}
+      <a href="{{ url_for('tableau_de_bord') }}">Tableau de bord</a>
+      <a href="{{ url_for('stock') }}">Mon stock</a>
+      <a href="{{ url_for('etageres') }}">Mes étagères</a>
+      <a href="{{ url_for('ajouter_bouteilles') }}">Ajouter</a>
+      <a href="{{ url_for('historique') }}">Historique</a>
+      <a href="{{ url_for('catalogue') }}">Catalogue</a>
+      <a href="{{ url_for('profil') }}">Profil</a>
+      <a href="{{ url_for('deconnexion') }}">Se déconnecter</a>
+    {% else %}
+      <a href="{{ url_for('connexion') }}">Connexion</a>
+      <a href="{{ url_for('inscription') }}">Créer un compte</a>
+    {% endif %}
+  </nav>
+
+  <!-- Messages envoyés avec flash() : erreurs en rouge, succès en vert -->
+  {% for categorie, message in get_flashed_messages(with_categories=true) %}
+    <div class="{{ categorie }}">{{ message }}</div>
+  {% endfor %}
+
+  <!-- Chaque page remplace ce bloc par son propre contenu -->
+  {% block contenu %}{% endblock %}
+</body>
+</html>

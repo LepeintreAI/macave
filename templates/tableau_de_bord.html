@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block contenu %}
+<h1>Tableau de bord de {{ utilisateur.identifiant }}</h1>
+
+<div class="carte">Bouteilles en stock<br><b>{{ nb_bouteilles }}</b></div>
+<div class="carte">Références distinctes<br><b>{{ nb_references }}</b></div>
+<div class="carte">Étagères<br><b>{{ nb_etageres }}</b></div>
+<div class="carte">Occupation globale<br>
+  <b>
+  {% if occupation is none %}
+    Aucune étagère          {# §5.2 : état explicite, pas de division par zéro #}
+  {% else %}
+    {{ (occupation * 100) | round(1) }} %
+  {% endif %}
+  </b>
+</div>
+<div class="carte">Valeur du stock<br><b>{{ "%.2f" | format(valeur) }} €</b></div>
+{% endblock %}

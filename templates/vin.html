@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block contenu %}
+<h1>{{ vin.domaine }} — {{ vin.nom }}</h1>
+<p>{{ vin.type_vin }} · {{ vin.millesime }} · {{ vin.region }}</p>
+{% if vin.photo %}
+  <img class="etiquette" src="{{ url_for('static', filename='photos/' ~ vin.photo) }}" alt="Étiquette de {{ vin.nom }}">
+{% endif %}
+{% if vin.description %}<p>{{ vin.description }}</p>{% endif %}
+
+<h2>Note communautaire</h2>
+{% if vin.note_moyenne() is none %}
+  <p><b>Non évalué</b></p>                    {# §4.4 : jamais 0 sans évaluation #}
+{% else %}
+  <p><b>{{ vin.note_moyenne() | round(1) }}/20</b> ({{ vin.evaluations | length }} évaluation(s))</p>
+{% endif %}
+
+<h2>Évaluations</h2>
+{% if vin.evaluations %}
+<table>
+  <tr><th>Auteur</th><th>Note</th><th>Commentaire</th><th>Date</th><th></th></tr>
+  {% for ev in vin.evaluations %}
+  <tr>
+    <td>{{ ev.auteur.identifiant }}</td>
+    <td>{{ ev.note }}/20</td>
+    <td>{{ ev.commentaire or "" }}</td>
+    <td>{{ ev.date.strftime("%d/%m/%Y") }}</td>
+    <td>
+      {% if ev.auteur is sameas utilisateur %}   {# R12 : lien seulement pour ses propres évaluations #}
+        <a href="{{ url_for('modifier_evaluation', id_vin=vin.id_vin, id_evaluation=ev.id_evaluation) }}">Modifier</a>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+  <p>Aucune évaluation pour l'instant.</p>
+{% endif %}
+
+<h2>Mes exemplaires en stock</h2>
+{% if mes_exemplaires %}
+<ul>
+  {% for b in mes_exemplaires %}
+    <li><a href="{{ url_for('bouteille', id_bouteille=b.id_bouteille) }}">Bouteille n°{{ b.id_bouteille }}</a>
+        — étagère {{ b.etagere.nom }}, {{ "%.2f" | format(b.prix_achat) }} €</li>
+  {% endfor %}
+</ul>
+{% else %}
+  <p>Vous n'avez aucun exemplaire de ce vin en stock.</p>
+{% endif %}
+{% endblock %}

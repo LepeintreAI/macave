@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block contenu %}
+<h1>Historique des dégustations</h1>
+<p>Trier par note :
+  <a href="{{ url_for('historique', ordre='desc') }}">meilleures d'abord</a> ·
+  <a href="{{ url_for('historique', ordre='asc') }}">moins bonnes d'abord</a></p>
+
+{% if lignes %}
+<table>
+  <tr><th>Vin</th><th>Millésime</th><th>Dégustée le</th><th>Ma note</th><th>Commentaire</th></tr>
+  {% for b, ev in lignes %}
+  <tr>
+    <td><a href="{{ url_for('vin', id_vin=b.vin.id_vin) }}">{{ b.vin.domaine }} — {{ b.vin.nom }}</a></td>
+    <td>{{ b.vin.millesime }}</td>
+    <td>{{ b.date_sortie.strftime("%d/%m/%Y") }}</td>
+    <td>{% if ev %}{{ ev.note }}/20{% else %}—{% endif %}</td>
+    <td>{{ ev.commentaire or "" if ev else "" }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+  <p>Aucune bouteille archivée pour l'instant.</p>
+{% endif %}
+{% endblock %}

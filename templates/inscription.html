@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block contenu %}
+<h1>Créer un compte</h1>
+<form method="post">
+  <label for="identifiant">Identifiant</label>
+  <input id="identifiant" name="identifiant" required>
+
+  <label for="email">Adresse électronique</label>
+  <input id="email" name="email" type="email" required>
+
+  <label for="mot_de_passe">Mot de passe (8 caractères minimum)</label>
+  <input id="mot_de_passe" name="mot_de_passe" type="password" required>
+
+  <button type="submit">Créer mon compte</button>
+</form>
+{% endblock %}

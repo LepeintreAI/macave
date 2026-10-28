@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_tri.html" import entete, recherche %}
+{% block contenu %}
+<h1>Mon stock</h1>
+{{ recherche("stock", q, type_vin, types, tri, ordre) }}
+
+<p>{{ bouteilles | length }} bouteille(s) · cliquez sur un titre de colonne pour trier.
+   Les vins « Non évalué » sont toujours affichés en dernier.</p>
+
+{% if bouteilles %}
+<table>
+  <tr>
+    {{ entete("stock", "domaine", "Domaine", tri, ordre, q, type_vin) }}
+    {{ entete("stock", "nom", "Nom", tri, ordre, q, type_vin) }}
+    {{ entete("stock", "type", "Type", tri, ordre, q, type_vin) }}
+    {{ entete("stock", "millesime", "Millésime", tri, ordre, q, type_vin) }}
+    {{ entete("stock", "region", "Région", tri, ordre, q, type_vin) }}
+    {{ entete("stock", "prix", "Prix d'achat", tri, ordre, q, type_vin) }}
+    {{ entete("stock", "note", "Note commu.", tri, ordre, q, type_vin) }}
+    <th>Étagère</th><th></th>
+  </tr>
+  {% for b in bouteilles %}
+  {% set moyenne = b.vin.note_moyenne() %}
+  <tr>
+    <td>{{ b.vin.domaine }}</td>
+    <td><a href="{{ url_for('vin', id_vin=b.vin.id_vin) }}">{{ b.vin.nom }}</a></td>
+    <td>{{ b.vin.type_vin }}</td>
+    <td>{{ b.vin.millesime }}</td>
+    <td>{{ b.vin.region }}</td>
+    <td>{{ "%.2f" | format(b.prix_achat) }} €</td>
+    <td>{% if moyenne is none %}Non évalué{% else %}{{ moyenne | round(1) }}/20{% endif %}</td>
+    <td><a href="{{ url_for('etagere', id_etagere=b.etagere.id_etagere) }}">{{ b.etagere.nom }}</a></td>
+    <td><a href="{{ url_for('bouteille', id_bouteille=b.id_bouteille) }}">Gérer</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+  <p>Aucune bouteille ne correspond.</p>
+{% endif %}
+{% endblock %}

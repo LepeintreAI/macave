@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block contenu %}
+<h1>Mes étagères</h1>
+
+{% if etageres %}
+<table>
+  <tr><th>Nom</th><th>Occupation</th><th>Taux</th></tr>
+  {% for e in etageres %}
+  <tr>
+    <td><a href="{{ url_for('etagere', id_etagere=e.id_etagere) }}">{{ e.nom }}</a></td>
+    <td>{{ e.occupation() }} / {{ e.capacite }}</td>
+    <td>{{ (e.taux_occupation() * 100) | round(0) | int }} %</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>Vous n'avez pas encore d'étagère.</p>
+{% endif %}
+
+<h2>Nouvelle étagère</h2>
+<form method="post">
+  <label for="nom">Nom</label>
+  <input id="nom" name="nom" required>
+
+  <label for="capacite">Capacité (nombre de bouteilles)</label>
+  <input id="capacite" name="capacite" type="number" min="1" required>
+
+  <button type="submit">Créer l'étagère</button>
+</form>
+{% endblock %}

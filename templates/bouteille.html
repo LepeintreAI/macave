@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block contenu %}
+<h1>Bouteille : <a href="{{ url_for('vin', id_vin=b.vin.id_vin) }}">{{ b.vin.domaine }} — {{ b.vin.nom }}</a></h1>
+<p>{{ b.vin.type_vin }}, {{ b.vin.millesime }}, {{ b.vin.region }}</p>
+<p>Prix d'achat : <b>{{ "%.2f" | format(b.prix_achat) }} €</b> · ajoutée le {{ b.date_ajout.strftime("%d/%m/%Y") }}</p>
+
+{% if b.est_en_stock() %}
+  <p>En stock sur l'étagère
+     <a href="{{ url_for('etagere', id_etagere=b.etagere.id_etagere) }}">{{ b.etagere.nom }}</a></p>
+
+  <h2>Déplacer</h2>
+  {% if autres_etageres %}
+  <form method="post" action="{{ url_for('deplacer_bouteille', id_bouteille=b.id_bouteille) }}">
+    <label for="id_etagere">Vers l'étagère</label>
+    <select id="id_etagere" name="id_etagere">
+      {% for e in autres_etageres %}
+        <option value="{{ e.id_etagere }}">{{ e.nom }} ({{ e.places_libres() }} place(s) libre(s))</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Déplacer</button>
+  </form>
+  {% else %}
+  <p class="gris">Aucune autre étagère : créez-en une pour pouvoir déplacer cette bouteille.</p>
+  {% endif %}
+
+  <h2>Modifier le prix</h2>
+  <form method="post" action="{{ url_for('modifier_prix', id_bouteille=b.id_bouteille) }}">
+    <label for="prix">Nouveau prix (€)</label>
+    <input id="prix" name="prix" value="{{ b.prix_achat }}" required>
+    <button type="submit">Modifier</button>
+  </form>
+
+  <h2>Archiver après dégustation</h2>
+  <form method="post" action="{{ url_for('archiver_bouteille', id_bouteille=b.id_bouteille) }}">
+    <label for="note">Note (0 à 20)</label>
+    <input id="note" name="note" type="number" min="0" max="20" required>
+    <label for="commentaire">Commentaire (facultatif)</label>
+    <textarea id="commentaire" name="commentaire"></textarea>
+    <button type="submit">Archiver</button>
+  </form>
+
+  <h2>Retirer définitivement</h2>
+  <form method="post" action="{{ url_for('retirer_bouteille', id_bouteille=b.id_bouteille) }}">
+    <p class="gris">La bouteille disparaît de votre cave, sans historique. Le vin reste dans le catalogue.</p>
+    <button type="submit">Retirer</button>
+  </form>
+{% else %}
+  <p>Archivée le {{ b.date_sortie.strftime("%d/%m/%Y") }}
+  {% if evaluation %} — votre note : <b>{{ evaluation.note }}/20</b>{% endif %}</p>
+{% endif %}
+{% endblock %}

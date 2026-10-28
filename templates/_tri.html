@@ -1,0 +1,33 @@
+{# Macro = petit "morceau de page" réutilisable, comme une fonction.
+   Elle fabrique un titre de colonne cliquable qui trie par cette colonne,
+   et inverse le sens si on reclique sur la colonne déjà triée. #}
+{% macro entete(page, colonne, libelle, tri, ordre, q, type_vin) %}
+  {% if tri == colonne and ordre == "asc" %}
+    {% set nouvel_ordre = "desc" %}
+  {% else %}
+    {% set nouvel_ordre = "asc" %}
+  {% endif %}
+  <th>
+    <a href="{{ url_for(page, q=q, type_vin=type_vin, tri=colonne, ordre=nouvel_ordre) }}">{{ libelle }}</a>
+    {% if tri == colonne %}{{ "▲" if ordre == "asc" else "▼" }}{% endif %}
+  </th>
+{% endmacro %}
+
+{# Formulaire de recherche + filtre, commun au stock et au catalogue #}
+{% macro recherche(page, q, type_vin, types, tri, ordre) %}
+<form method="get" action="{{ url_for(page) }}" class="recherche">
+  <label for="q">Rechercher (nom ou domaine)</label>
+  <input id="q" name="q" value="{{ q }}">
+  <label for="type_vin">Type</label>
+  <select id="type_vin" name="type_vin">
+    <option value="">Tous</option>
+    {% for t in types %}
+      <option value="{{ t }}" {% if t == type_vin %}selected{% endif %}>{{ t }}</option>
+    {% endfor %}
+  </select>
+  <input type="hidden" name="tri" value="{{ tri }}">
+  <input type="hidden" name="ordre" value="{{ ordre }}">
+  <button type="submit">Filtrer</button>
+  <a href="{{ url_for(page) }}">Réinitialiser</a>
+</form>
+{% endmacro %}

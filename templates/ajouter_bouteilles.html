@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block contenu %}
+<h1>Ajouter des bouteilles</h1>
+<form method="post" enctype="multipart/form-data">   {# obligatoire pour envoyer un fichier #}
+
+  <fieldset>
+    <legend>1. Le vin</legend>
+    <label for="id_vin">Choisir un vin du catalogue</label>
+    <select id="id_vin" name="id_vin">
+      <option value="">— Nouveau vin (remplir ci-dessous) —</option>
+      {% for v in vins %}
+        <option value="{{ v.id_vin }}">{{ v.domaine }} — {{ v.nom }} ({{ v.type_vin }}, {{ v.millesime }})</option>
+      {% endfor %}
+    </select>
+
+    <p class="gris">Ou décrire un nouveau vin. S'il existe déjà (même domaine, nom, type,
+       millésime et région, sans tenir compte des majuscules ni des espaces), il est réutilisé.</p>
+    <label for="domaine">Domaine</label>
+    <input id="domaine" name="domaine" value="{{ formulaire.get('domaine', '') }}">
+    <label for="nom">Nom ou cuvée</label>
+    <input id="nom" name="nom" value="{{ formulaire.get('nom', '') }}">
+    <label for="type_vin">Type</label>
+    <select id="type_vin" name="type_vin">
+      {% for t in types %}<option value="{{ t }}">{{ t }}</option>{% endfor %}
+    </select>
+    <label for="millesime">Millésime</label>
+    <input id="millesime" name="millesime" type="number" value="{{ formulaire.get('millesime', '') }}">
+    <label for="region">Région</label>
+    <input id="region" name="region" value="{{ formulaire.get('region', '') }}">
+    <label for="description">Description</label>
+    <textarea id="description" name="description">{{ formulaire.get('description', '') }}</textarea>
+    <label for="photo">Photo de l'étiquette (facultatif, JPG/PNG/WEBP, 2 Mo max)</label>
+    <input id="photo" name="photo" type="file" accept=".jpg,.jpeg,.png,.webp">
+  </fieldset>
+
+  <fieldset>
+    <legend>2. Les bouteilles</legend>
+    <label for="id_etagere">Étagère</label>
+    <select id="id_etagere" name="id_etagere">
+      {% for e in etageres %}
+        <option value="{{ e.id_etagere }}">{{ e.nom }} ({{ e.places_libres() }} place(s) libre(s))</option>
+      {% endfor %}
+    </select>
+    <label for="quantite">Quantité</label>
+    <input id="quantite" name="quantite" type="number" min="1" value="1" required>
+    <label for="prix">Prix d'achat unitaire (€)</label>
+    <input id="prix" name="prix" required>
+  </fieldset>
+
+  <button type="submit">Ajouter</button>
+</form>
+{% endblock %}
